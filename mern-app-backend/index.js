@@ -39,7 +39,7 @@ async function startServer() {
     // GET route for fetching questions
     app.get('/questions', async (req, res) => {
       try {
-        const questions = await Question.find(); // Fetch all questions
+        const questions = await Question.find().sort({ updatedAt: -1, createdAt: -1 });  // Sort by updatedAt, then by createdAt
         res.status(200).send(questions);
       } catch (error) {
         console.error('Error fetching questions:', error);
