@@ -83,34 +83,30 @@ async function startServer() {
     // PUT route for editing a question
     app.put('/questions/:id', async (req, res) => {
       const { id } = req.params;
-      const { question } = req.body;
-
-      try {
-        const updatedQuestion = await Question.findByIdAndUpdate(id, { question }, { new: true });
-        if (!updatedQuestion) {
-          return res.status(404).send({ message: 'Question not found' });
-        }
-        res.status(200).send(updatedQuestion);
-      } catch (error) {
-        console.error('Error updating question:', error);
-        res.status(500).send({ message: 'Error updating question', error });
+      const { question, user } = req.body; // Assume the user name is passed in the body
+    
+      const existingQuestion = await Question.findById(id);
+      if (existingQuestion.name !== user) {
+        return res.status(403).send('You can only edit your own questions.');
       }
+    
+      existingQuestion.question = question;
+      await existingQuestion.save();
+      res.send(existingQuestion);
     });
 
     // DELETE route for deleting a question
     app.delete('/questions/:id', async (req, res) => {
       const { id } = req.params;
-
-      try {
-        const deletedQuestion = await Question.findByIdAndDelete(id);
-        if (!deletedQuestion) {
-          return res.status(404).send({ message: 'Question not found' });
-        }
-        res.status(200).send({ message: 'Question deleted successfully' });
-      } catch (error) {
-        console.error('Error deleting question:', error);
-        res.status(500).send({ message: 'Error deleting question', error });
+      const { user } = req.body; // Ensure user is passed in the request body
+    
+      const existingQuestion = await Question.findById(id);
+      if (existingQuestion.name !== user) {
+        return res.status(403).send('You can only delete your own questions.');
       }
+    
+      await Question.findByIdAndDelete(id);
+      res.send({ message: 'Question deleted successfully' });
     });
     // Start the server
     app.listen(PORT, () => {
