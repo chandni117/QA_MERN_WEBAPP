@@ -1,13 +1,12 @@
-frontend/node_modules/
+# Node modules
 mern-app-backend/node_modules/
+frontend/node_modules/
 
+# Environment files
 mern-app-backend/.env
 
 # Logs
-logs
-*.log
+logs/
 npm-debug.log*
-
-# OS files
-.DS_Store
-Thumbs.db
+yarn-debug.log*
+yarn-error.log*
